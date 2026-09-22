@@ -1,0 +1,195 @@
+package appsignal
+
+import "context"
+
+type LogSource struct {
+	ID   string          `json:"id"`
+	Name string          `json:"name"`
+	Key  string          `json:"key"`
+	Type string          `json:"type"`
+	Fmt  LogSourceFormat `json:"fmt"`
+}
+
+const getLogSourcesQuery = `
+query GetAppLogSources($appId: String!) {
+	app(id: $appId) {
+		logs {
+			sources {
+				id
+				name
+				key
+				type
+				fmt
+			}
+		}
+	}
+}
+`
+
+// GetAppLogSources lists every log source of an app.
+func (c *Client) GetAppLogSources(ctx context.Context, appID string) ([]LogSource, error) {
+	var out struct {
+		App struct {
+			Logs struct {
+				LogSources []LogSource `json:"sources"`
+			} `json:"logs"`
+		} `json:"app"`
+	}
+
+	if err := c.Query(ctx, getLogSourcesQuery, map[string]any{"appId": appID}, &out); err != nil {
+		return nil, err
+	}
+
+	return out.App.Logs.LogSources, nil
+}
+
+const getLogSourceQuery = `
+query GetAppLogSource($appId: String!, $logSourceId: String!) {
+	app(id: $appId) {
+		logs {
+			source(id: $logSourceId) {
+				id
+				name
+				key
+				type
+				fmt
+			}
+		}
+	}
+}
+`
+
+// GetAppLogSource looks up a single log source of an app by its ID. It returns a
+// nil log source when the app has no log source with that ID.
+func (c *Client) GetAppLogSource(ctx context.Context, appID string, logSourceID string) (*LogSource, error) {
+	var out struct {
+		App struct {
+			Logs struct {
+				Source *LogSource `json:"source"`
+			} `json:"logs"`
+		} `json:"app"`
+	}
+
+	if err := c.Query(ctx, getLogSourceQuery, map[string]any{"appId": appID, "logSourceId": logSourceID}, &out); err != nil {
+		return nil, err
+	}
+
+	return out.App.Logs.Source, nil
+}
+
+const createLogSourceMutation = `
+mutation CreateLogSource($appId: String!, $fmt: SourceFormatEnum!, $name: String!, $type: String!) {
+	createLogSource(appId: $appId, fmt: $fmt, name: $name, type: $type) {
+		id
+		name
+		key
+		type
+		fmt
+	}
+}
+`
+
+type CreateAppLogSourceInput struct {
+	AppID string          `json:"appId"`
+	Fmt   LogSourceFormat `json:"fmt"`
+	Name  string          `json:"name"`
+	Type  string          `json:"type"`
+}
+
+// CreateAppLogSource adds a new log source to an app and returns the created log
+// source, including the key used to ship logs to it.
+func (c *Client) CreateAppLogSource(ctx context.Context, input CreateAppLogSourceInput) (*LogSource, error) {
+	var out struct {
+		LogSource *LogSource `json:"createLogSource"`
+	}
+
+	variables := map[string]any{
+		"appId": input.AppID,
+		"fmt":   input.Fmt,
+		"name":  input.Name,
+		"type":  input.Type,
+	}
+
+	if err := c.Mutate(ctx, createLogSourceMutation, variables, &out); err != nil {
+		return nil, err
+	}
+
+	return out.LogSource, nil
+}
+
+const updateLogSourceMutation = `
+mutation UpdateLogSource($appId: String!, $fmt: SourceFormatEnum!, $logSourceId: String!, $name: String!) {
+	updateLogSource(appId: $appId, fmt: $fmt, id: $logSourceId, name: $name) {
+		id
+		name
+		key
+		type
+		fmt
+	}
+}
+`
+
+type UpdateAppLogSourceInput struct {
+	AppID       string          `json:"appId"`
+	Fmt         LogSourceFormat `json:"fmt"`
+	LogSourceID string          `json:"logSourceId"`
+	Name        string          `json:"name"`
+}
+
+// UpdateAppLogSource changes the name and format of an existing log source and
+// returns the updated log source. Both fields are required, so pass the current
+// value for anything you do not want to change.
+func (c *Client) UpdateAppLogSource(ctx context.Context, input UpdateAppLogSourceInput) (*LogSource, error) {
+	var out struct {
+		LogSource *LogSource `json:"updateLogSource"`
+	}
+
+	variables := map[string]any{
+		"appId":       input.AppID,
+		"fmt":         input.Fmt,
+		"logSourceId": input.LogSourceID,
+		"name":        input.Name,
+	}
+
+	if err := c.Mutate(ctx, updateLogSourceMutation, variables, &out); err != nil {
+		return nil, err
+	}
+
+	return out.LogSource, nil
+}
+
+const deleteLogSourceMutation = `
+mutation DeleteLogSource($appId: String!, $logSourceId: String!) {
+	deleteLogSource(appId: $appId, id: $logSourceId) {
+		id
+		name
+		key
+		type
+		fmt
+	}
+}
+`
+
+type DeleteAppLogSourceInput struct {
+	AppID       string `json:"appId"`
+	LogSourceID string `json:"logSourceId"`
+}
+
+// DeleteAppLogSource removes a log source from an app and returns the log source
+// as it was just before deletion.
+func (c *Client) DeleteAppLogSource(ctx context.Context, input DeleteAppLogSourceInput) (*LogSource, error) {
+	var out struct {
+		LogSource *LogSource `json:"deleteLogSource"`
+	}
+
+	variables := map[string]any{
+		"appId":       input.AppID,
+		"logSourceId": input.LogSourceID,
+	}
+
+	if err := c.Mutate(ctx, deleteLogSourceMutation, variables, &out); err != nil {
+		return nil, err
+	}
+
+	return out.LogSource, nil
+}
