@@ -38,7 +38,6 @@ func ExampleClient_CreateAppLogTrigger() {
 		Description:              &description,
 		NotificationOptions:      &notificationOptions,
 		NotificationTriggerValue: &notificationTriggerValue,
-		Severities:               []appsignal.LogSeverity{appsignal.SeverityError, appsignal.SeverityFatal},
 		SourceIDs:                []string{"6aad24d1ba6bc351255e7cba"},
 		NotifierIDs:              []string{"6aad24d1ba6bc351255e7cbd"},
 	})
@@ -53,7 +52,7 @@ func ExampleClient_UpdateAppLogTrigger() {
 	client := appsignal.NewClient("", os.Getenv("APPSIGNAL_API_TOKEN"))
 
 	// Only the fields that are set get sent, so this widens the query and
-	// leaves the name, severities and notifiers alone.
+	// leaves the name and notifiers alone.
 	query := "level:error OR level:fatal"
 
 	trigger, err := client.UpdateAppLogTrigger(context.Background(), appsignal.UpdateAppLogTriggerInput{

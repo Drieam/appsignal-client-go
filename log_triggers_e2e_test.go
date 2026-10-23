@@ -64,7 +64,6 @@ func TestCreateUpdateAndDeleteAppLogTrigger(t *testing.T) {
 		Query:               "test",
 		Description:         &description,
 		NotificationOptions: &notificationOptions,
-		Severities:          []appsignal.LogSeverity{appsignal.SeverityError},
 		SourceIDs:           []string{testAppLogSourceID},
 	})
 	if err != nil {
@@ -100,9 +99,6 @@ func TestCreateUpdateAndDeleteAppLogTrigger(t *testing.T) {
 	if created.NotificationOptions != notificationOptions {
 		t.Errorf("NotificationOptions = %q, want %q", created.NotificationOptions, notificationOptions)
 	}
-	if len(created.Severities) != 1 || created.Severities[0] != appsignal.SeverityError {
-		t.Errorf("Severities = %v, want %v", created.Severities, []appsignal.LogSeverity{appsignal.SeverityError})
-	}
 	if len(created.SourceIDs) != 1 || created.SourceIDs[0] != testAppLogSourceID {
 		t.Errorf("SourceIDs = %v, want %v", created.SourceIDs, []string{testAppLogSourceID})
 	}
@@ -123,7 +119,6 @@ func TestCreateUpdateAndDeleteAppLogTrigger(t *testing.T) {
 		Name:                &updatedName,
 		Query:               &updatedQuery,
 		NotificationOptions: &updatedNotificationOptions,
-		Severities:          []appsignal.LogSeverity{appsignal.SeverityError, appsignal.SeverityWarn},
 		SourceIDs:           []string{testAppLogSourceID},
 	})
 	if err != nil {
@@ -144,9 +139,6 @@ func TestCreateUpdateAndDeleteAppLogTrigger(t *testing.T) {
 	}
 	if updated.NotificationOptions != updatedNotificationOptions {
 		t.Errorf("UpdateAppLogTrigger: NotificationOptions = %q, want %q", updated.NotificationOptions, updatedNotificationOptions)
-	}
-	if len(updated.Severities) != 2 {
-		t.Errorf("UpdateAppLogTrigger: Severities = %v, want 2 entries", updated.Severities)
 	}
 
 	if got := findLogTrigger(t, client, testAppID, created.ID); got == nil {
