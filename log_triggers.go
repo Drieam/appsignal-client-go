@@ -15,7 +15,6 @@ type LogTrigger struct {
 	NotificationOptions      LogTriggerNotificationOption `json:"notificationOptions"`
 	NotificationTriggerValue int32                        `json:"notificationTriggerValue"`
 	Order                    int32                        `json:"order"`
-	Severities               []LogSeverity                `json:"severities"`
 	Notifiers                []Notifier                   `json:"notifiers"`
 }
 
@@ -41,7 +40,6 @@ func (t *LogTrigger) UnmarshalJSON(data []byte) error {
 	t.NotificationTriggerValue = deref(raw.NotificationTriggerValue)
 	t.Notifiers = derefSlice(raw.Notifiers)
 	t.SourceIDs = orEmpty(t.SourceIDs)
-	t.Severities = orEmpty(t.Severities)
 
 	return nil
 }
@@ -60,7 +58,6 @@ query GetAppLogTriggers($appId: String!) {
 				notificationOptions
 				notificationTriggerValue
 				order
-				severities
 				notifiers {
 					id
 					name
@@ -97,7 +94,6 @@ mutation CreateLogTrigger(
 	$description: String,
 	$notificationOptions: IncidentNotificationFrequencyEnum,
 	$notificationTriggerValue: Int,
-	$severities: [String!],
 	$sourceIds: [String!],
 	$notifierIds: [String!],
 ) {
@@ -108,7 +104,6 @@ mutation CreateLogTrigger(
     description: $description
     notificationOptions: $notificationOptions
     notificationTriggerValue: $notificationTriggerValue
-    severities: $severities
     sourceIds: $sourceIds,
 		notifierIds: $notifierIds,
   ) {
@@ -121,7 +116,6 @@ mutation CreateLogTrigger(
 		notificationOptions
 		notificationTriggerValue
 		order
-		severities
 		notifiers {
 			id
 			name
@@ -138,7 +132,6 @@ type CreateAppLogTriggerInput struct {
 	Description              *string                       `json:"description,omitempty"`
 	NotificationOptions      *LogTriggerNotificationOption `json:"notificationOptions,omitempty"`
 	NotificationTriggerValue *int32                        `json:"notificationTriggerValue,omitempty"`
-	Severities               []LogSeverity                 `json:"severities,omitempty"`
 	SourceIDs                []string                      `json:"sourceIds,omitempty"`
 	NotifierIDs              []string                      `json:"notifierIds,omitempty"`
 }
@@ -165,9 +158,6 @@ func (c *Client) CreateAppLogTrigger(ctx context.Context, input CreateAppLogTrig
 	if input.NotificationTriggerValue != nil {
 		variables["notificationTriggerValue"] = *input.NotificationTriggerValue
 	}
-	if input.Severities != nil {
-		variables["severities"] = input.Severities
-	}
 	if input.SourceIDs != nil {
 		variables["sourceIds"] = input.SourceIDs
 	}
@@ -191,7 +181,6 @@ mutation UpdateLogTrigger(
 	$description: String,
 	$notificationOptions: IncidentNotificationFrequencyEnum,
 	$notificationTriggerValue: Int,
-	$severities: [String!],
 	$sourceIds: [String!],
 	$notifierIds: [String!],
 ) {
@@ -203,7 +192,6 @@ mutation UpdateLogTrigger(
     description: $description
     notificationOptions: $notificationOptions
     notificationTriggerValue: $notificationTriggerValue
-    severities: $severities
     sourceIds: $sourceIds,
 		notifierIds: $notifierIds,
   ) {
@@ -216,7 +204,6 @@ mutation UpdateLogTrigger(
 		notificationOptions
 		notificationTriggerValue
 		order
-		severities
 		notifiers {
 			id
 			name
@@ -234,7 +221,6 @@ type UpdateAppLogTriggerInput struct {
 	Description              *string                       `json:"description,omitempty"`
 	NotificationOptions      *LogTriggerNotificationOption `json:"notificationOptions,omitempty"`
 	NotificationTriggerValue *int32                        `json:"notificationTriggerValue,omitempty"`
-	Severities               []LogSeverity                 `json:"severities,omitempty"`
 	SourceIDs                []string                      `json:"sourceIds,omitempty"`
 	NotifierIDs              []string                      `json:"notifierIds,omitempty"`
 }
@@ -267,9 +253,6 @@ func (c *Client) UpdateAppLogTrigger(ctx context.Context, input UpdateAppLogTrig
 	if input.NotificationTriggerValue != nil {
 		variables["notificationTriggerValue"] = *input.NotificationTriggerValue
 	}
-	if input.Severities != nil {
-		variables["severities"] = input.Severities
-	}
 	if input.SourceIDs != nil {
 		variables["sourceIds"] = input.SourceIDs
 	}
@@ -299,7 +282,6 @@ mutation DeleteLogTrigger(
 		notificationOptions
 		notificationTriggerValue
 		order
-		severities
 		notifiers {
 			id
 			name

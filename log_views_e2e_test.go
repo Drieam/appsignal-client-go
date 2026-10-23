@@ -43,7 +43,6 @@ func TestCreateUpdateAndDeleteAppLogView(t *testing.T) {
 		Query:      &query,
 		Columns:    []string{"timestamp", "message"},
 		LineHeight: &lineHeight,
-		Severities: []appsignal.LogSeverity{appsignal.SeverityError},
 		SourceIDs:  []string{testAppLogSourceID},
 	})
 	if err != nil {
@@ -79,9 +78,6 @@ func TestCreateUpdateAndDeleteAppLogView(t *testing.T) {
 	if len(created.Columns) != 2 {
 		t.Errorf("Columns = %v, want 2 entries", created.Columns)
 	}
-	if len(created.Severities) != 1 || created.Severities[0] != appsignal.SeverityError {
-		t.Errorf("Severities = %v, want %v", created.Severities, []appsignal.LogSeverity{appsignal.SeverityError})
-	}
 	if len(created.SourceIDs) != 1 || created.SourceIDs[0] != testAppLogSourceID {
 		t.Errorf("SourceIDs = %v, want %v", created.SourceIDs, []string{testAppLogSourceID})
 	}
@@ -106,7 +102,6 @@ func TestCreateUpdateAndDeleteAppLogView(t *testing.T) {
 		Query:      &updatedQuery,
 		Columns:    []string{"timestamp", "severity", "message"},
 		LineHeight: &updatedLineHeight,
-		Severities: []appsignal.LogSeverity{appsignal.SeverityError, appsignal.SeverityWarn},
 		SourceIDs:  []string{testAppLogSourceID},
 	})
 	if err != nil {
@@ -130,9 +125,6 @@ func TestCreateUpdateAndDeleteAppLogView(t *testing.T) {
 	}
 	if len(updated.Columns) != 3 {
 		t.Errorf("UpdateAppLogView: Columns = %v, want 3 entries", updated.Columns)
-	}
-	if len(updated.Severities) != 2 {
-		t.Errorf("UpdateAppLogView: Severities = %v, want 2 entries", updated.Severities)
 	}
 
 	got, err = client.GetAppLogView(ctx, testAppID, created.ID)

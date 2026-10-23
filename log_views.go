@@ -6,13 +6,12 @@ import (
 )
 
 type LogView struct {
-	ID         string        `json:"id"`
-	Name       string        `json:"name"`
-	Query      string        `json:"query"`
-	Columns    []string      `json:"columns"`
-	LineHeight string        `json:"lineHeight"`
-	Severities []LogSeverity `json:"severities"`
-	SourceIDs  []string      `json:"sourceIds"`
+	ID         string   `json:"id"`
+	Name       string   `json:"name"`
+	Query      string   `json:"query"`
+	Columns    []string `json:"columns"`
+	LineHeight string   `json:"lineHeight"`
+	SourceIDs  []string `json:"sourceIds"`
 }
 
 // UnmarshalJSON decodes a log view, turning nulls from the API into empty
@@ -33,7 +32,6 @@ func (v *LogView) UnmarshalJSON(data []byte) error {
 	v.Query = deref(raw.Query)
 	v.LineHeight = deref(raw.LineHeight)
 	v.Columns = orEmpty(v.Columns)
-	v.Severities = orEmpty(v.Severities)
 	v.SourceIDs = orEmpty(v.SourceIDs)
 
 	return nil
@@ -48,7 +46,6 @@ query GetAppLogViews($appId: String!) {
 			query
 			columns
 			lineHeight
-			severities
 			sourceIds
 		}
 	}
@@ -79,7 +76,6 @@ query GetAppLogView($appId: String!, $logViewId: String!) {
 			query
 			columns
 			lineHeight
-			severities
 			sourceIds
 		}
 	}
@@ -109,7 +105,6 @@ mutation CreateLogView(
   $query: String,
   $columns: [String!],
   $lineHeight: String,
-  $severities: [String!],
 	$sourceIds: [String!]
 ) {
   createLogView(
@@ -118,7 +113,6 @@ mutation CreateLogView(
 		query: $query
 		columns: $columns
 		lineHeight: $lineHeight
-		severities: $severities
 		sourceIds: $sourceIds
 	) {
 		id
@@ -126,20 +120,18 @@ mutation CreateLogView(
 		query
 		columns
 		lineHeight
-		severities
 		sourceIds
 	}
 }
 `
 
 type CreateAppLogViewInput struct {
-	AppID      string        `json:"appId"`
-	Name       string        `json:"name"`
-	Query      *string       `json:"query,omitempty"`
-	Columns    []string      `json:"columns,omitempty"`
-	LineHeight *string       `json:"lineHeight,omitempty"`
-	Severities []LogSeverity `json:"severities,omitempty"`
-	SourceIDs  []string      `json:"sourceIds,omitempty"`
+	AppID      string   `json:"appId"`
+	Name       string   `json:"name"`
+	Query      *string  `json:"query,omitempty"`
+	Columns    []string `json:"columns,omitempty"`
+	LineHeight *string  `json:"lineHeight,omitempty"`
+	SourceIDs  []string `json:"sourceIds,omitempty"`
 }
 
 // CreateAppLogView adds a new log view to an app and returns the created log
@@ -163,9 +155,6 @@ func (c *Client) CreateAppLogView(ctx context.Context, input CreateAppLogViewInp
 	if input.LineHeight != nil {
 		variables["lineHeight"] = *input.LineHeight
 	}
-	if input.Severities != nil {
-		variables["severities"] = input.Severities
-	}
 	if input.SourceIDs != nil {
 		variables["sourceIds"] = input.SourceIDs
 	}
@@ -185,7 +174,6 @@ mutation UpdateLogView(
   $query: String,
   $columns: [String!],
   $lineHeight: String,
-  $severities: [String!],
 	$sourceIds: [String!]
 ) {
   updateLogView(
@@ -195,7 +183,6 @@ mutation UpdateLogView(
 		query: $query
 		columns: $columns
 		lineHeight: $lineHeight
-		severities: $severities
 		sourceIds: $sourceIds
 	) {
 		id
@@ -203,21 +190,19 @@ mutation UpdateLogView(
 		query
 		columns
 		lineHeight
-		severities
 		sourceIds
 	}
 }
 `
 
 type UpdateAppLogViewInput struct {
-	AppID      string        `json:"appId"`
-	LogViewID  string        `json:"logViewId"`
-	Name       *string       `json:"name,omitempty"`
-	Query      *string       `json:"query,omitempty"`
-	Columns    []string      `json:"columns,omitempty"`
-	LineHeight *string       `json:"lineHeight,omitempty"`
-	Severities []LogSeverity `json:"severities,omitempty"`
-	SourceIDs  []string      `json:"sourceIds,omitempty"`
+	AppID      string   `json:"appId"`
+	LogViewID  string   `json:"logViewId"`
+	Name       *string  `json:"name,omitempty"`
+	Query      *string  `json:"query,omitempty"`
+	Columns    []string `json:"columns,omitempty"`
+	LineHeight *string  `json:"lineHeight,omitempty"`
+	SourceIDs  []string `json:"sourceIds,omitempty"`
 }
 
 // UpdateAppLogView changes an existing log view and returns the updated log
@@ -244,9 +229,6 @@ func (c *Client) UpdateAppLogView(ctx context.Context, input UpdateAppLogViewInp
 	if input.LineHeight != nil {
 		variables["lineHeight"] = *input.LineHeight
 	}
-	if input.Severities != nil {
-		variables["severities"] = input.Severities
-	}
 	if input.SourceIDs != nil {
 		variables["sourceIds"] = input.SourceIDs
 	}
@@ -272,7 +254,6 @@ mutation DeleteLogView(
 		query
 		columns
 		lineHeight
-		severities
 		sourceIds
 	}
 }

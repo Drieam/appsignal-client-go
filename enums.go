@@ -11,23 +11,6 @@ const (
 	LogSourceFormatAutodetect LogSourceFormat = "AUTODETECT"
 )
 
-// LogSeverity is the severity level of a log line. It is used by both log
-// triggers and log views.
-type LogSeverity string
-
-const (
-	SeverityTrace    LogSeverity = "TRACE"
-	SeverityDebug    LogSeverity = "DEBUG"
-	SeverityInfo     LogSeverity = "INFO"
-	SeverityNotice   LogSeverity = "NOTICE"
-	SeverityWarn     LogSeverity = "WARN"
-	SeverityError    LogSeverity = "ERROR"
-	SeverityCritical LogSeverity = "CRITICAL"
-	SeverityAlert    LogSeverity = "ALERT"
-	SeverityFatal    LogSeverity = "FATAL"
-	SeverityUnknown  LogSeverity = "UNKNOWN"
-)
-
 // LogTriggerActionType is the action a log trigger performs when it matches.
 type LogTriggerActionType string
 

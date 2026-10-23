@@ -34,7 +34,7 @@ func ExampleClient_GetAppLogView() {
 		log.Fatal("no log view with that ID")
 	}
 
-	fmt.Println(view.Name, view.Severities)
+	fmt.Println(view.Name, view.Query)
 }
 
 func ExampleClient_CreateAppLogView() {
@@ -45,11 +45,10 @@ func ExampleClient_CreateAppLogView() {
 	query := "level:error"
 
 	view, err := client.CreateAppLogView(context.Background(), appsignal.CreateAppLogViewInput{
-		AppID:      "6aad24d1ba6bc351255e7cb5",
-		Name:       "Errors",
-		Query:      &query,
-		Severities: []appsignal.LogSeverity{appsignal.SeverityError, appsignal.SeverityFatal},
-		SourceIDs:  []string{"6aad24d1ba6bc351255e7cba"},
+		AppID:     "6aad24d1ba6bc351255e7cb5",
+		Name:      "Errors",
+		Query:     &query,
+		SourceIDs: []string{"6aad24d1ba6bc351255e7cba"},
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -62,7 +61,7 @@ func ExampleClient_UpdateAppLogView() {
 	client := appsignal.NewClient("", os.Getenv("APPSIGNAL_API_TOKEN"))
 
 	// Only the fields that are set get sent, so this renames the view and
-	// leaves its query, columns and severities alone.
+	// leaves its query and columns alone.
 	name := "Errors and worse"
 
 	view, err := client.UpdateAppLogView(context.Background(), appsignal.UpdateAppLogViewInput{

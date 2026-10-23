@@ -21,27 +21,26 @@ func TestLogViewNormalization(t *testing.T) {
 		{
 			name: "values pass through untouched",
 			view: `{"id":"1","name":"view","query":"hostname=web","columns":["timestamp","message"],
-				"lineHeight":"0","severities":["ERROR"],"sourceIds":["s1"]}`,
+				"lineHeight":"0","sourceIds":["s1"]}`,
 			want: appsignal.LogView{
 				ID:         "1",
 				Name:       "view",
 				Query:      "hostname=web",
 				Columns:    []string{"timestamp", "message"},
 				LineHeight: "0",
-				Severities: []appsignal.LogSeverity{appsignal.SeverityError},
 				SourceIDs:  []string{"s1"},
 			},
 		},
 		{
 			name: "null scalars read as empty strings",
 			view: `{"id":"1","name":"view","query":null,"lineHeight":null,
-				"columns":[],"severities":[],"sourceIds":[]}`,
+				"columns":[],"sourceIds":[]}`,
 			want: emptyLogView(),
 		},
 		{
 			name: "null collections read as empty slices",
 			view: `{"id":"1","name":"view","query":"","lineHeight":"",
-				"columns":null,"severities":null,"sourceIds":null}`,
+				"columns":null,"sourceIds":null}`,
 			want: emptyLogView(),
 		},
 		{
@@ -80,7 +79,6 @@ func emptyLogView() appsignal.LogView {
 		Query:      "",
 		Columns:    []string{},
 		LineHeight: "",
-		Severities: []appsignal.LogSeverity{},
 		SourceIDs:  []string{},
 	}
 }
@@ -129,7 +127,7 @@ func TestLogTriggerNormalization(t *testing.T) {
 			name: "values pass through untouched",
 			trigger: `{"id":"1","name":"trigger","query":"hostname=web","sourceIds":["s1"],
 				"actionType":"TRIGGER","description":"a trigger","notificationOptions":"NEVER",
-				"notificationTriggerValue":3,"order":2,"severities":["ERROR"],
+				"notificationTriggerValue":3,"order":2,
 				"notifiers":[{"id":"n1","name":"Slack","icon":"slack"}]}`,
 			want: appsignal.LogTrigger{
 				ID:                       "1",
@@ -141,19 +139,18 @@ func TestLogTriggerNormalization(t *testing.T) {
 				NotificationOptions:      appsignal.NotificationOptionNever,
 				NotificationTriggerValue: 3,
 				Order:                    2,
-				Severities:               []appsignal.LogSeverity{appsignal.SeverityError},
 				Notifiers:                []appsignal.Notifier{{ID: "n1", Name: "Slack", Icon: "slack"}},
 			},
 		},
 		{
 			name: "null scalars read as zero values",
 			trigger: `{"id":"1","name":"trigger","description":null,"notificationOptions":null,
-				"notificationTriggerValue":null,"sourceIds":[],"severities":[],"notifiers":[]}`,
+				"notificationTriggerValue":null,"sourceIds":[],"notifiers":[]}`,
 			want: emptyLogTrigger(),
 		},
 		{
 			name: "null collections read as empty slices",
-			trigger: `{"id":"1","name":"trigger","sourceIds":null,"severities":null,
+			trigger: `{"id":"1","name":"trigger","sourceIds":null,
 				"notifiers":null}`,
 			want: emptyLogTrigger(),
 		},
@@ -193,10 +190,9 @@ func TestLogTriggerNormalization(t *testing.T) {
 // emptyLogTrigger is what every "nothing was sent" case has to produce.
 func emptyLogTrigger() appsignal.LogTrigger {
 	return appsignal.LogTrigger{
-		ID:         "1",
-		Name:       "trigger",
-		SourceIDs:  []string{},
-		Severities: []appsignal.LogSeverity{},
-		Notifiers:  []appsignal.Notifier{},
+		ID:        "1",
+		Name:      "trigger",
+		SourceIDs: []string{},
+		Notifiers: []appsignal.Notifier{},
 	}
 }
