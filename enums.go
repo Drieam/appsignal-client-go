@@ -31,3 +31,12 @@ const (
 	NotificationOptionNthInHour       LogTriggerNotificationOption = "NTH_IN_HOUR"
 	NotificationOptionNthInDay        LogTriggerNotificationOption = "NTH_IN_DAY"
 )
+
+// LogExportState is the state of a log export
+type LogExportState string
+
+const (
+	LogExportStateRunning  LogExportState = "RUNNING"
+	LogExportStateRetrying LogExportState = "RETRYING"
+	LogExportStateFailed   LogExportState = "FAILED"
+)
